@@ -10,6 +10,7 @@ import (
 
 	"github.com/astaxie/beego"
 	bc "github.com/astaxie/beego/context"
+	"github.com/dtmkeng/bmux/bmux"
 	"github.com/gin-gonic/gin"
 	"github.com/labstack/echo"
 )
@@ -110,4 +111,22 @@ func loadEchoSingle(method, path string, h echo.HandlerFunc) http.Handler {
 func main() {
 	fmt.Println("Usage: go test -bench=. -timeout=20m")
 	os.Exit(1)
+}
+
+// Bmux
+func loadBmuxSingle(method, path string, h bmux.Handler) http.Handler {
+	r := bmux.NewRouter()
+	switch method {
+	case "GET":
+		r.Get(path, h)
+	default:
+	}
+	return r
+}
+func bmuxHandler(ctx bmux.Context) error {
+	return nil
+}
+func bmuxHandlerWrite(ctx bmux.Context) error {
+	// io.WriteString(http.ResponseWriter, ctx.Query("name"))
+	return ctx.String(ctx.Query("name"))
 }

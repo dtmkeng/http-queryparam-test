@@ -13,6 +13,7 @@ var (
 	ginQuery   http.Handler
 	echoQuery  http.Handler
 	beegoQuery http.Handler
+	bmuxQuery  http.Handler
 )
 var benchRe *regexp.Regexp
 
@@ -82,6 +83,9 @@ func init() {
 	calcMem("Beego_loadsingle and writehandler", func() {
 		beegoQuery = loadBeegoSingle("GET", "/user/?name=test", beegoHandlerWrite)
 	})
+	calcMem("Bmux_loadsingle and writehandler", func() {
+		bmuxQuery = loadBmuxSingle("GET", "/user/?name=test", bmuxHandlerWrite)
+	})
 }
 func BenchmarkGin_Query_Handler(b *testing.B) {
 	router := loadGinSingle("GET", "/user", ginHandle)
@@ -97,6 +101,12 @@ func BenchmarkEcho_Query_Handler(b *testing.B) {
 }
 func BenchmarkBeego_Query_Handler(b *testing.B) {
 	router := loadBeegoSingle("GET", "/user", beegoHandler)
+
+	r, _ := http.NewRequest("GET", "/user/?name=test", nil)
+	benchRequest(b, router, r)
+}
+func BenchmarkBmux_Query_Handler(b *testing.B) {
+	router := loadBmuxSingle("GET", "/user", bmuxHandler)
 
 	r, _ := http.NewRequest("GET", "/user/?name=test", nil)
 	benchRequest(b, router, r)
@@ -118,4 +128,11 @@ func BenchmarkBeego_Query_WriteHandler(b *testing.B) {
 
 	r, _ := http.NewRequest("GET", "/user/?name=test", nil)
 	benchRequest(b, router, r)
+}
+
+func BenchmarkBmux_Query_WriteHandler(b *testing.B) {
+	// router := loadBmuxSingle("GET", "/user", bmuxHandlerWrite)
+
+	r, _ := http.NewRequest("GET", "/user/?name=test", nil)
+	benchRequest(b, bmuxQuery, r)
 }
