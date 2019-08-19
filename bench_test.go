@@ -131,8 +131,8 @@ func BenchmarkBeego_Query_WriteHandler(b *testing.B) {
 }
 
 func BenchmarkBmux_Query_WriteHandler(b *testing.B) {
-	// router := loadBmuxSingle("GET", "/user", bmuxHandlerWrite)
+	router := loadBmuxSingle("GET", "/user", bmuxHandlerWrite)
 
 	r, _ := http.NewRequest("GET", "/user/?name=test", nil)
-	benchRequest(b, bmuxQuery, r)
+	benchRequest(b, router, r)
 }
